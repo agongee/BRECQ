@@ -7,6 +7,7 @@ from models.resnet import BasicBlock, Bottleneck
 from models.regnet import ResBottleneckBlock
 from models.mobilenetv2 import InvertedResidual
 
+from timm.models.vision_transformer import Block as VitBlock
 
 class BaseQuantBlock(nn.Module):
     """
@@ -33,6 +34,18 @@ class BaseQuantBlock(nn.Module):
         for m in self.modules():
             if isinstance(m, QuantModule):
                 m.set_quant_state(weight_quant, act_quant)
+
+
+class QuantVitBlock(BaseQuantBlock):
+    """
+    Implementation of Quantized timm.models.vision_transformer.Block
+    """
+    def __init__(self, block: VitBlock, weight_quant_params: dict = {}, act_quant_params: dict = {}):
+        self.norm_layer = block.norm_layer
+        self.attn = Attention
+
+
+
 
 
 class QuantBasicBlock(BaseQuantBlock):
